@@ -1,6 +1,6 @@
 {
   "name": "react-native-paystack",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React Native wrapper for Paystack Mobile SDK https://github.com/PaystackHQ/paystack-android",
   "main": "index.js",
   "scripts": {

@@ -1,3 +1,3 @@
-var PaysrackAndroid = require('./PaysrackAndroid');
+var PaystackAndroid = require('./PaystackAndroid');
 
-module.exports = PaysrackAndroid;
+module.exports = PaystackAndroid;

@@ -1,0 +1,25 @@
+{
+  "name": "react-native-paystack",
+  "version": "1.0.1",
+  "description": "React Native wrapper for Paystack Mobile SDK https://github.com/PaystackHQ/paystack-android",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tolu360/React-Native-Paystack.git"
+  },
+  "keywords": [
+    "react-native",
+    "android",
+    "react-component",
+    "paystack"
+  ],
+  "author": "Tolu Olowu (Arttitude 360)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tolu360/React-Native-Paystack/issues"
+  },
+  "homepage": "https://github.com/tolu360/React-Native-Paystack#readme"
+  }

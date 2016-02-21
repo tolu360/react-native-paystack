@@ -33,7 +33,5 @@ repositories {
 
 dependencies {
     compile 'com.facebook.react:react-native:0.19.+'
-    compile('co.paystack.android:paystack:1.1.0') {
-        transitive = true
-    }
+    compile 'co.paystack.android:paystack:1.1.0'
 }

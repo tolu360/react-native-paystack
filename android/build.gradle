@@ -1,9 +1,6 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            url 'https://dl.bintray.com/paystack/maven/'
-        }
     }
 
     dependencies {
@@ -19,7 +16,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -35,6 +32,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:0.14.+'
-    compile 'co.paystack.android:paystack:1.1.0'
+    compile 'com.facebook.react:react-native:0.19.+'
+    compile('co.paystack.android:paystack:1.1.0') {
+        transitive = true
+    }
 }

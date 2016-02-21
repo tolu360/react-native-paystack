@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.3.0'
-    }
-}
 
 apply plugin: 'com.android.library'
 
@@ -20,10 +11,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    lintOptions {
-        abortOnError false
+
+    buildTypes {
+        release {
+            minifyEnabled false  // Set this to true to enable Proguard
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
     }
 }
+
 
 repositories {
     maven {
@@ -32,6 +28,6 @@ repositories {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:0.19.+'
+    compile "com.facebook.react:react-native:0.20.+"
     compile 'co.paystack.android:paystack:1.1.0'
 }

@@ -17,6 +17,8 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
@@ -27,9 +29,6 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 	protected Card card;
 
 	public static final String TAG = "PaystackAndroid";
-
-	protected Callback successCallback;
-	protected Callback errorCallback;
 
 	@Override
     public String getName() {
@@ -44,46 +43,25 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
     	PaystackSdk.initialize(getReactApplicationContext());
     }
 
-    protected void handleError(String errorMsg){
-        try {
-            Log.e(TAG, errorMsg);
-            JSONObject error = new JSONObject();
-            error.put("error", errorMsg);
-            errorCallback.invoke(error);
-        } catch (JSONException e) {
-            Log.e(TAG, e.toString());
-        }
+    protected WritableMap buildErrorMsg(String errorMsg, int errorCode) {
+    	WritableMap errorData = new WritableNativeMap();
+		errorData.putString("error", errorMsg);
+		errorData.putInt("code", errorCode);
+		return errorData;        
     }
 
-    protected void handleSuccess(String msg){
-        try {
-            Log.i(TAG, msg);
-            JSONObject success = new JSONObject();
-            success.put("token", msg);
-            successCallback.invoke(success);
-        } catch (JSONException e) {
-            handleError(e.getMessage());
-        }
+    protected WritableMap buildSuccessMsg(String token, String lastDigits){
+    	WritableMap successData = new WritableNativeMap();
+		successData.putString("token", token);
+		successData.putString("last4", lastDigits);
+		return successData;
     }
 
     @ReactMethod
     public void getToken(String cardNumber, int expiryMonth, int expiryYear, String cvc, Callback errorCb, Callback successCb) {
     	
-		errorCallback = errorCb;
-		successCallback = successCb;		
-
-		//check card validity
-        validateCard(cardNumber, expiryMonth, expiryYear, cvc);
-		
-		if (card.isValid()) {
-			createToken(card);
-		}
-    }
-
-    protected void validateCard(String cardNumber, int expiryMonth, int expiryYear, String cvc) {
-
 		if (isEmpty(cardNumber)) {
-			handleError("Empty card number");
+			errorCb.invoke(buildErrorMsg("Empty card number", 420));
 			return;
 		}
 
@@ -91,13 +69,13 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 		card = new Card.Builder(cardNumber, 0, 0, "").build();
 
 		if (!card.validNumber()) {
-			handleError("Invalid card number");
+			errorCb.invoke(buildErrorMsg("Invalid card number", 421));
 			return;
 		}
 
 		//validate cvc
 		if (isEmpty(cvc)) {
-			handleError("Empty cvc");
+			errorCb.invoke(buildErrorMsg("Empty cvc", 422));
 			return;
 		}
 		
@@ -106,13 +84,13 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 
 		//check that it's valid
 		if (!card.validCVC()) {
-			handleError("Invalid cvc");
+			errorCb.invoke(buildErrorMsg("Invalid cvc", 423));
 			return;
 		}
 
 		//validate expiry month
 		if (expiryMonth < 1) {
-			handleError("Invalid month");
+			errorCb.invoke(buildErrorMsg("Invalid month", 424));
 			return;
 		}
 
@@ -121,7 +99,7 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 
 		//validate expiry year		
 		if (expiryYear < 1) {
-			handleError("Invalid year");
+			errorCb.invoke(buildErrorMsg("Invalid year", 425));
 			return;
 		}
 
@@ -130,23 +108,26 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 
 		//validate expiry
 		if (!card.validExpiryDate()) {
-			handleError("Invalid expiry");
+			errorCb.invoke(buildErrorMsg("Invalid expiry date", 426));
 		}
+		
+		if (card.isValid()) {
+			createToken(card, errorCb, successCb);
+		} 
     }
 
-	private void createToken(Card card) {
+	private void createToken(Card card, final Callback errorCb, final Callback successCb) {
 		//then create token using PaystackSdk class
 		PaystackSdk.createToken(card, new Paystack.TokenCallback() {
 			@Override
 			public void onCreate(Token token) {
 				//here you retrieve the token, and send to your server for charging.
-				handleSuccess(token.token);
-			
+				successCb.invoke(buildSuccessMsg(token.token, token.last4));			
 			}
 
 			@Override
 			public void onError(Exception error) {
-				handleError(error.getMessage());
+				errorCb.invoke(buildErrorMsg(error.getMessage(), 427));
 			}
 		});
 	}

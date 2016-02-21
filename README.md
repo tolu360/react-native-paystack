@@ -5,10 +5,7 @@ for Android by [Arttitude 360](http://www.arttitude360.com)
 ## Index
 
 1. [Description](#1-description)
-2. [Installation](#3-installation)
-	3. [Automatically (CLI / Plugman)](#automatically-cli--plugman)
-	3. [Manually](#manually)
-	3. [PhoneGap Build](#phonegap-build)
+2. [Installation](#2-installation)
 3. [Usage](#3-usage)
 4. [Credits](#4-credits)
 5. [Changelog](#5-changelog)

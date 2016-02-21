@@ -38,13 +38,9 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
         return "PaystackAndroid";
     }
 
-    Activity mActivity;
-
     public PaystackAndroid(
-            ReactApplicationContext reactContext,
-            Activity activity) {
+            ReactApplicationContext reactContext) {
         super(reactContext);
-        mActivity = activity;
 
         //initialize sdk
     	PaystackSdk.initialize(getReactApplicationContext());

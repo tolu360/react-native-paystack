@@ -13,17 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReactNativePaystackPackage implements ReactPackage {
-    Activity mActivity;
-
-    public ReactNativePaystackPackage(Activity activity) {
-        mActivity = activity;
-    }
-
+    
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-        modules.add(new PaystackAndroid(reactContext, mActivity));
+        module.setPackage(this);
+        modules.add(new PaystackAndroid(reactContext));
         return modules;
     }
 

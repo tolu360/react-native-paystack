@@ -1,7 +1,7 @@
 {
   "name": "react-native-paystack",
   "description": "React Native wrapper for Paystack Mobile SDK https://github.com/PaystackHQ/paystack-android",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "Tolu Olowu (Arttitude360)",
   "keywords": [
     "android",

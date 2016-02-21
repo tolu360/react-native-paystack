@@ -180,7 +180,7 @@ Perhaps needless to say, this module leverages the [Paystack Android SDK](https:
 
 ## 5. CHANGELOG
 
-1.0.11: initial version supporting Android.
+1.0.12: initial version supporting Android.
 
 ## 6. License
 

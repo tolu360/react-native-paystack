@@ -21,8 +21,6 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
-import java.lang.reflect.InvocationTargetException;
-
 public class PaystackAndroid extends ReactContextBaseJavaModule {
 
 	protected Token token;

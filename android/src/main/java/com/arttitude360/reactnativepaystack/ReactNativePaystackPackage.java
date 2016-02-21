@@ -18,7 +18,6 @@ public class ReactNativePaystackPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-        module.setPackage(this);
         modules.add(new PaystackAndroid(reactContext));
         return modules;
     }

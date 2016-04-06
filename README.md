@@ -47,8 +47,8 @@ npm install react-native-paystack --save
 
 }
 ```
-
 5. Compile and have some card tokens!
+
 
 #### Android
 

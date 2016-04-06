@@ -29,5 +29,5 @@ repositories {
 
 dependencies {
     compile "com.facebook.react:react-native:0.20.+"
-    compile 'co.paystack.android:paystack:1.1.0'
+    compile 'co.paystack.android:paystack:1.2.0'
 }

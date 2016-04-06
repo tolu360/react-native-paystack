@@ -1,6 +1,6 @@
-# React Native Wrapper for Paystack SDK
+# React Native Wrapper for Paystack Mobile SDKs
 
-for Android by [Arttitude 360](http://www.arttitude360.com)
+for Android & iOS by [Arttitude 360](http://www.arttitude360.com)
 
 ## Index
 
@@ -13,7 +13,7 @@ for Android by [Arttitude 360](http://www.arttitude360.com)
 
 ## 1. Description
 
-This React Native module provides a wrapper to add Paystack Payments to your React Native application using the [Paystack Mobile SDK Android](https://github.com/PaystackHQ/paystack-android) library.
+This React Native module provides a wrapper to add Paystack Payments to your React Native application using the [Paystack Android Mobile SDK](https://github.com/PaystackHQ/paystack-android) and the [Paystack iOS Mobile SDK](https://github.com/PaystackHQ/paystack-ios) libraries.
 
 ## 2. Installation
 
@@ -25,6 +25,33 @@ npm install react-native-paystack --save
 
 ### Configuration
 
+#### IOS
+
+1. In XCode's "Project navigator", right click on project name folder ➜ `Add Files to <...>`
+ - Ensure `Copy items if needed` and `Create groups` are checked
+2. Go to `node_modules` ➜ `react-native-paystack` ➜ add `paystack-ios` folder
+3. To be sure you are all set, manually inspect your project target settings - Ensure:
+  + path to `paystack-ios` folder is set in `Build Settings > Search Paths > Framework Search Paths`
+  + `PaystackIOS.m` is listed in `Build Phases > Compile Sources`
+  + `Paystack.framework` is listed in `Build Phases > Link Binary with Libraries`. 
+4. Edit your `AppDelegate.m` and import the Paystack framework:
+
+```Objective-C
+#import <Paystack/Paystack.h>
+...
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  ...
+  [Paystack setDefaultPublishableKey:@"INSERT-PUBLIC-KEY-HERE"];
+  ...
+
+}
+```
+
+5. Compile and have some card tokens!
+
+#### Android
+
 #### Step 1 - Update Gradle Settings
 
 ```gradle
@@ -32,7 +59,7 @@ npm install react-native-paystack --save
 ...
 
 include ':reactnativepaystack'
-project(':reactnativepaystack').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-paystack/android')
+project(':reactnativepaystack').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-paystack/paystack-android')
 ```
 
 #### Step 2 - Update app Gradle Build
@@ -43,8 +70,6 @@ project(':reactnativepaystack').projectDir = new File(rootProject.projectDir, '.
 
 dependencies {
     ...
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
     compile project(':reactnativepaystack')
 }
 ```
@@ -52,37 +77,6 @@ dependencies {
 #### Step 3 - Register React Package
 
 // file: android/app/src/main/java/.../MainActivity
-
-##### react-native < v0.18.0
-
-```java
-...
-import com.arttitude360.reactnativepaystack.ReactNativePaystackPackage; // <-- import
-...
-
-public class MainActivity extends FragmentActivity implements DefaultHardwareBackBtnHandler {
-
-    private ReactInstanceManager mReactInstanceManager;
-    private ReactRootView mReactRootView;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mReactRootView = new ReactRootView(this);
-        mReactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(getApplication())
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
-                .addPackage(new MainReactPackage())
-                .addPackage(new ReactNativePaystackPackage()) // <-- Register package here
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
-        mReactRootView.startReactApplication(mReactInstanceManager, "AwesomeProject", null);
-        setContentView(mReactRootView);
-    }
-...
-```
 
 ##### react-native >= v0.18.0
 
@@ -115,8 +109,11 @@ It's a cinch to obtain a single-use token with the PaystackSdk using the react-n
 
 ```js
 PaystackAndroid.getToken(cardNumber, expiryMonth, expiryYear, cvc, errorCallback, successCallback);
+PaystackIOS.getToken(cardNumber, expiryMonth, expiryYear, cvc, responseCallback);
 ```
 To be more elaborate:
+
+#### On Android
 
 ```js
 import PaystackAndroid from 'react-native-paystack';
@@ -124,14 +121,16 @@ import PaystackAndroid from 'react-native-paystack';
 componentDidMount() {
     PaystackAndroid.getToken(
       '4123450131001384', 
-      5, 
-      2016, 
-      883, 
+      '05', 
+      '16', 
+      '883', 
       (resp) => {
+        // didn't get a token - something went wrong
         this.setState({error: resp.error});
         console.log(resp);
       },
       (resp) => {
+        // got a token - do your thang!
         this.setState({token: resp.token});
         console.log(resp);
       }
@@ -139,15 +138,42 @@ componentDidMount() {
   }
 ```
 
+#### On iOS
+
+```js
+import PaystackIOS from 'react-native-paystack';
+
+componentDidMount() {
+    PaystackIOS.getToken(
+      '4123450131001384', 
+      '05', 
+      '16', 
+      '883', 
+      (error, resp) => {
+        if (error) {
+          // didn't get a token - something went wrong
+          this.setState({errorMsg: error.error});
+        }
+        if (resp) {
+          // got a token - do your thang!
+          this.setState({tokenStr: resp.token});
+        }
+      }
+    );
+  }
+```
+
 Explaining the arguments to `PaystackAndroid.getToken`:
 
-+ {Function} successCallback - callback to be invoked on successfully acquiring a token.
++ {Function} responseCallback (only on iOS) - callback to be invoked with the result of calling `getToken` - takes in 2 arguments - (error, response). If any error is set, you get an error object with 2 keys: "error" is a string containing a description of the error, "code" is an arbitrary error code.
+If a token is returned, you get a response object with 2 keys: "token" is a string containing the returned token, while "last4" is a string containing the last 4 digits of the card the token belongs to.
++ {Function} successCallback (only on android) - callback to be invoked on successfully acquiring a token.
  * A single object argument will be passed which has 2 keys: "token" is a string containing the returned token, while "last4" is a string containing the last 4 digits of the card the token belongs to.
-+ {Function} errorCallback - callback to be invoked on failure to acquire a valid token.
++ {Function} errorCallback (only on android) - callback to be invoked on failure to acquire a valid token.
  * A single object argument will be passed which has 2 keys: "error" is a string containing a description of the error, "code" is an arbitrary error code.
 + cardNumber: the card number as a String without any seperator e.g 5555555555554444
 + expiryMonth: the expiry month as an integer ranging from 1-12 e.g 10 (October)
-+ expiryYear: the expiry year as an integer e.g 2015
++ expiryYear: the expiry year as an integer e.g 15 (2 digits - very !important for iOS)
 + cvc: the card security code as a String e.g 123
 + To make it easy for you, you can pass all string or all integer arguments - the module will handle the type castings for you.
 
@@ -176,7 +202,7 @@ Send the token to your server and create a charge by calling the Paystack REST A
 
 ## 4. CREDITS
 
-Perhaps needless to say, this module leverages the [Paystack Android SDK](https://github.com/PaystackHQ/paystack-android) for all the heavy liftings.
+Perhaps needless to say, this module leverages the [Paystack Android SDK](https://github.com/PaystackHQ/paystack-android) and the [Paystack IOS SDK](https://github.com/PaystackHQ/paystack-ios) for all the heavy liftings.
 
 ## 5. CHANGELOG
 

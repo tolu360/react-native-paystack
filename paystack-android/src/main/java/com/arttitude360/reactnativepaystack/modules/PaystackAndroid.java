@@ -61,7 +61,7 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
     public void getToken(String cardNumber, int expiryMonth, int expiryYear, String cvc, Callback errorCb, Callback successCb) {
     	
 		if (isEmpty(cardNumber)) {
-			errorCb.invoke(buildErrorMsg("Empty card number", 420));
+			errorCb.invoke(buildErrorMsg("Empty card number.", 420));
 			return;
 		}
 
@@ -69,13 +69,13 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 		card = new Card.Builder(cardNumber, 0, 0, "").build();
 
 		if (!card.validNumber()) {
-			errorCb.invoke(buildErrorMsg("Invalid card number", 421));
+			errorCb.invoke(buildErrorMsg("Invalid card number.", 421));
 			return;
 		}
 
 		//validate cvc
 		if (isEmpty(cvc)) {
-			errorCb.invoke(buildErrorMsg("Empty cvc", 422));
+			errorCb.invoke(buildErrorMsg("Empty cvc.", 422));
 			return;
 		}
 		
@@ -84,13 +84,13 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 
 		//check that it's valid
 		if (!card.validCVC()) {
-			errorCb.invoke(buildErrorMsg("Invalid cvc", 423));
+			errorCb.invoke(buildErrorMsg("Invalid cvc.", 423));
 			return;
 		}
 
 		//validate expiry month
 		if (expiryMonth < 1) {
-			errorCb.invoke(buildErrorMsg("Invalid month", 424));
+			errorCb.invoke(buildErrorMsg("Invalid expiration month.", 424));
 			return;
 		}
 
@@ -99,7 +99,7 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 
 		//validate expiry year		
 		if (expiryYear < 1) {
-			errorCb.invoke(buildErrorMsg("Invalid year", 425));
+			errorCb.invoke(buildErrorMsg("Invalid expiration year.", 425));
 			return;
 		}
 
@@ -108,7 +108,7 @@ public class PaystackAndroid extends ReactContextBaseJavaModule {
 
 		//validate expiry
 		if (!card.validExpiryDate()) {
-			errorCb.invoke(buildErrorMsg("Invalid expiry date", 426));
+			errorCb.invoke(buildErrorMsg("Invalid expiration date", 426));
 		}
 		
 		if (card.isValid()) {

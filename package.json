@@ -1,7 +1,7 @@
 {
   "name": "react-native-paystack",
-  "description": "React Native wrappers for Paystack Android & iOS Mobile SDKs @ https://github.com/PaystackHQ/paystack-android & https://github.com/PaystackHQ/paystack-ios",
-  "version": "1.1.1",
+  "description": "React Native wrappers for Paystack Android & iOS Mobile SDKs",
+  "version": "1.1.2",
   "author": "Tolu Olowu (Arttitude360)",
   "keywords": [
     "android",
@@ -18,6 +18,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tolu360/React-Native-Paystack"
+    "url": "git+https://github.com/tolu360/React-Native-Paystack"
   }
 }

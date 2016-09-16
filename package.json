@@ -1,23 +1,34 @@
 {
   "name": "react-native-paystack",
-  "description": "React Native wrappers for Paystack Android & iOS Mobile SDKs",
-  "version": "1.1.3",
-  "author": "Tolu Olowu (Arttitude360)",
-  "keywords": [
-    "android",
-    "paystack",
-    "react-component",
-    "react-native",
-    "ios"
-  ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/tolu360/React-Native-Paystack/blob/master/LICENSE.md"
-    }
-  ],
+  "description": "React Native Wrappers for Paystack Android & iOS Mobile SDKs",
+  "main": "index.js",
+  "author": "Tolu Olowu (Arttitude 360) <tolu@arttitude360.com>",
+  "version": "2.0.0",
+  "scripts": {
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tolu360/React-Native-Paystack"
+    "url": "https://github.com/tolu360/react-native-paystack"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tolu360/react-native-paystack/issues"
+  },
+  "homepage": "https://github.com/tolu360/react-native-paystack#readme",
+  "keywords": [
+    "react",
+    "react-native",
+    "react-component",
+    "ios",
+    "android",
+    "paystack",
+    "credit-card",
+    "payments"
+  ],
+  "peerDependencies": {
+    "react": ">=15.3.0",
+    "react-native": ">=0.32.0"
+  },
+  "devDependencies": {
   }
 }

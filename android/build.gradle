@@ -3,11 +3,11 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -28,6 +28,6 @@ repositories {
 }
 
 dependencies {
-    compile "com.facebook.react:react-native:0.20.+"
-    compile 'co.paystack.android:paystack:1.2.0'
+    compile 'com.facebook.react:react-native:+'
+    compile 'co.paystack.android:paystack:2.0.1'
 }

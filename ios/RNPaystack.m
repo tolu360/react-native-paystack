@@ -1,10 +1,13 @@
-/********* PaystackIOS.m Plugin Implementation *******/
+#import <Paystack/Paystack.h>
+#import "RNPaystack.h"
+#import "RCTUtils.h"
+#import "RCTLog.h"
 
-#import "PaystackIOS.h"
-
-
-
-@implementation PaystackIOS
+@implementation RNPaystack
+{
+    RCTPromiseResolveBlock _resolve;
+    RCTPromiseRejectBlock _reject;
+}
 
 RCT_EXPORT_MODULE();
 
@@ -38,17 +41,6 @@ RCT_EXPORT_MODULE();
     return isValid;
 }
 
-- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode
-{
-    NSMutableDictionary *returnInfo;
-    returnInfo = [NSMutableDictionary dictionaryWithCapacity:2];
-
-    [returnInfo setObject:errorMsg forKey:@"error"];
-    [returnInfo setObject:[NSNumber numberWithInt:errorCode] forKey:@"code"];
-
-    return returnInfo;
-}
-
 - (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4
 {
     NSMutableDictionary *returnInfo;
@@ -63,26 +55,26 @@ RCT_EXPORT_MODULE();
 - (BOOL)cardParamsAreValid:(NSString *)cardNumber withMonth:(NSString *)expMonth withYear:(NSString *)expYear andWithCvc:(NSString *)cvc
 {
     if (! [self isCardNumberValid:cardNumber validateCardBrand:YES]) {
-        self.errorMsg = @"Invalid card number.";
-        self.errorCode = 421;
+        self.errorMsg = @"Invalid card number";
+        self.errorCode = @"E_INVALID_NUMBER";
         return NO;
     }
 
     if (! [self isExpMonthValid:expMonth]) {
-        self.errorMsg = @"Invalid expiration month.";
-        self.errorCode = 424;
+        self.errorMsg = @"Invalid expiration month";
+        self.errorCode = @"E_INVALID_MONTH";
         return NO;
     }
 
     if (! [self isExpYearValid:expYear forMonth:expMonth]) {
-        self.errorMsg = @"Invalid expiration year.";
-        self.errorCode = 425;
+        self.errorMsg = @"Invalid expiration year";
+        self.errorCode = @"E_INVALID_YEAR";
         return NO;
     }
 
     if (! [self isCvcValid:cvc withNumber:cardNumber]) {
-        self.errorMsg = @"Invalid cvc code.";
-        self.errorCode = 423;
+        self.errorMsg = @"Invalid CVC";
+        self.errorCode = @"E_INVALID_CVC";
         return NO;
     }
 
@@ -90,17 +82,18 @@ RCT_EXPORT_MODULE();
 
 }
 
-RCT_EXPORT_METHOD(getToken:(NSString *)rawNumber withExpiryMonth:(NSString *)rawExpMonth withExpiryYear:(NSString *)rawExpYear andCvc:(NSString *)rawCvc sendResponse:(RCTResponseSenderBlock)responseCallback)
+RCT_EXPORT_METHOD(getToken:(NSString *)rawNumber withExpiryMonth:(NSString *)rawExpMonth withExpiryYear:(NSString *)rawExpYear andCvc:(NSString *)rawCvc 
+    resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    self.responseCallback = responseCallback;
+    _resolve = resolve;
+    _reject = reject;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (! [self cardParamsAreValid:rawNumber withMonth:rawExpMonth withYear:rawExpYear andWithCvc:rawCvc]) {
 
-            NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
-
-            if (self.responseCallback) {
-                self.responseCallback(@[returnInfo]);
+            // NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
+            if (_reject) {
+                _reject(self.errorCode, self.errorMsg, nil);
             }
 
         } else {
@@ -113,31 +106,31 @@ RCT_EXPORT_METHOD(getToken:(NSString *)rawNumber withExpiryMonth:(NSString *)raw
             if ([self isCardValid:cardParam]) {
                 [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken *token, NSError *error) {
                     if (token) {
-                        NSLog(@"- PaystackIOS Token is set");
+                        NSLog(@"- RNPaystack Token is set");
                         
                         NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
                         NSLog(@"token is set: %@", token.tokenId);
                         
-                        NSLog(@"- PaystackIOS responseCallback is set");
-                        if (self.responseCallback) {
-                            self.responseCallback(@[[NSNull null], returnInfo]);
+                        NSLog(@"- RNPaystack responseCallback is set");
+                        if (_resolve) {
+                            _resolve(returnInfo);
                         }
                     }
 
                     if (error) {
-                        NSLog(@"- PaystackIOS TokenError is set");
-                        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
+                        NSLog(@"- RNPaystack TokenError is set");
+                        // NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
 
-                        if (self.responseCallback) {
-                            self.responseCallback(@[returnInfo]);
+                        if (_reject) {
+                            _reject(@"E_TOKEN_ERROR", @"Error retrieving token for card", error);
                         }
                     }
                 }];
             } else {
-                NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
+                // NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
 
-                if (self.responseCallback) {
-                    self.responseCallback(@[returnInfo]);
+                if (_reject) {
+                    _reject(@"E_INVALID_CARD", @"Card is invalid", nil);
                 }
             }
         
@@ -147,3 +140,4 @@ RCT_EXPORT_METHOD(getToken:(NSString *)rawNumber withExpiryMonth:(NSString *)raw
 }
 
 @end
+  

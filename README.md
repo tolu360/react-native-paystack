@@ -64,7 +64,7 @@ dependencies {
 - Add the following in your `...MainApplication.java` file:
 
 ```java
-import com.arttitude360.reactnative.rngpaystack.RNPaystackPackage;
+import com.arttitude360.reactnative.rnpaystack.RNPaystackPackage;
 
 @Override
 protected List<ReactPackage> getPackages() {
@@ -106,7 +106,7 @@ It's a cinch to obtain a single-use card token using the react-native-paystack m
 ```javascript
 RNPaystack.getToken(cardNumber, expiryMonth, expiryYear, cvc);
 ```
-To be more elaborate, `RNPaystack.getToken()` returns a `Promise` like:
+To be more elaborate, `RNPaystack.getToken()` returns a Javascript `Promise` like:
 
 ```js
 import RNPaystack from 'react-native-paystack';
@@ -175,7 +175,7 @@ Using the react-native-paystack module, you can complete the transaction with th
 ```javascript
 RNPaystack.chargeCard(cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo);
 ```
-To be more elaborate, `RNPaystack.chargeCard()` returns a `Promise` like:
+To be more elaborate, `RNPaystack.chargeCard()` returns a Javascript `Promise` like:
 
 ```js
 import RNPaystack from 'react-native-paystack';

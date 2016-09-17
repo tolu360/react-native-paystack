@@ -104,9 +104,9 @@ protected List<ReactPackage> getPackages() {
 It's a cinch to obtain a single-use card token using the react-native-paystack module. Pls note, the SDK assumes you are responsible for building the card form/UI.
 
 ```javascript
-RNPaystackAndroid.getToken(cardNumber, expiryMonth, expiryYear, cvc);
+RNPaystack.getToken(cardNumber, expiryMonth, expiryYear, cvc);
 ```
-To be more elaborate, `RNPaystackAndroid.getToken()` returns a `Promise` like:
+To be more elaborate, `RNPaystack.getToken()` returns a `Promise` like:
 
 ```js
 import RNPaystack from 'react-native-paystack';
@@ -173,9 +173,9 @@ Send the token to your server and create a charge by calling the Paystack REST A
 Using the react-native-paystack module, you can complete the transaction with the Paystack Android SDK. Note that as with getting a card token, the SDK assumes you are responsible for building the card form/UI.
 
 ```javascript
-RNPaystackAndroid.chargeCard(cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo);
+RNPaystack.chargeCard(cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo);
 ```
-To be more elaborate, `RNPaystackAndroid.chargeCard()` returns a `Promise` like:
+To be more elaborate, `RNPaystack.chargeCard()` returns a `Promise` like:
 
 ```js
 import RNPaystack from 'react-native-paystack';

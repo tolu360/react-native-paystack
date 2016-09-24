@@ -38,6 +38,10 @@ react-native link react-native-paystack
 
 <img width=200 title="XCode files tree" src="./file-tree.png">
 
+- If you are working with XCode 8+, to allow encryptions work properly with the Paystack SDK, you may need to enable `Keychain Sharing` for your app. In the Capabilities pane, if Keychain Sharing isn’t enabled, toggle ON the switch in the Keychain Sharing section.
+
+<img width=400 title="XCode files tree" src="./4_enablekeychain_2x.png">
+
 #### Manual Config (iOS)
 
 - The following steps are optional, should be taken if you have not run `react-native link react-native-paystack` already.

@@ -16,4 +16,5 @@ typedef NS_ENUM(NSInteger, PSTCKCardBrand) {
     PSTCKCardBrandJCB,
     PSTCKCardBrandDinersClub,
     PSTCKCardBrandUnknown,
+    PSTCKCardBrandVerve,
 };

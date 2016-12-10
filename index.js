@@ -6,16 +6,20 @@ import { NativeModules, Platform } from 'react-native'
 const RNPaystackNative = NativeModules.RNPaystack
 
 class RNPaystack {
-	getToken(cardNumber, expiryMonth, expiryYear, cvc) {
-		return RNPaystackNative.getToken(String(cardNumber), String(expiryMonth), String(expiryYear), String(cvc));
-	}
-
-	chargeCard(cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo) {
-		if (Platform.OS != 'android') {
-			return Promise.reject(new Error("Method is not supported on iOS platform yet"));
+	getToken(cardParams) {
+		if (typeof cardParams != 'object') {
+			return Promise.reject(new Error("Method argument can only be a Javascript object"));
 		}
 
-		return RNPaystackNative.chargeCard(String(cardNumber), String(expiryMonth), String(expiryYear), String(cvc), String(email), parseInt(amountInKobo, 10));
+		return RNPaystackNative.getToken(cardParams);
+	}
+
+	chargeCard(chargeParams) {
+		if (typeof chargeParams != 'object') {
+			return Promise.reject(new Error("Method argument can only be a Javascript object"));
+		}
+
+		return RNPaystackNative.chargeCard(chargeParams);
 	}
 }
 

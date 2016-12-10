@@ -4,10 +4,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE
+#import <UIKit/UIViewController.h>
+#endif
 
-static NSString *const __nonnull PSTCKSDKVersion = @"1.0.0";
+static NSString *const __nonnull PSTCKSDKVersion = @"2.2.0";
 
-@class PSTCKCard, PSTCKCardParams, PSTCKToken;
+@class PSTCKCard, PSTCKCardParams, PSTCKTransactionParams, PSTCKToken;
 
 /**
  *  A callback to be run with a token response from the Paystack API.
@@ -16,6 +19,8 @@ static NSString *const __nonnull PSTCKSDKVersion = @"1.0.0";
  *  @param error The error returned from the response, or nil in one occurs. @see PaystackError.h for possible values.
  */
 typedef void (^PSTCKTokenCompletionBlock)(PSTCKToken * __nullable token, NSError * __nullable error);
+typedef void (^PSTCKErrorCompletionBlock)(NSError * __nonnull error);
+typedef void (^PSTCKTransactionCompletionBlock)(NSString * __nonnull reference);
 
 /**
  A top-level class that imports the rest of the Paystack SDK. This class used to contain several methods to create Paystack tokens, but those are now deprecated in
@@ -69,67 +74,11 @@ typedef void (^PSTCKTokenCompletionBlock)(PSTCKToken * __nullable token, NSError
  */
 - (void)createTokenWithCard:(nonnull PSTCKCardParams *)card completion:(nullable PSTCKTokenCompletionBlock)completion;
 
-@end
-
-#pragma mark - Deprecated Methods
-
-/**
- *  A callback to be run with a token response from the Paystack API.
- *
- *  @param token The Paystack token from the response. Will be nil if an error occurs. @see PSTCKToken
- *  @param error The error returned from the response, or nil in one occurs. @see PaystackError.h for possible values.
- *  @deprecated This has been renamed to PSTCKTokenCompletionBlock.
- */
-typedef void (^PSTCKCompletionBlock)(PSTCKToken * __nullable token, NSError * __nullable error) __attribute__((deprecated("PSTCKCompletionBlock has been renamed to PSTCKTokenCompletionBlock.")));
-
-// These methods are deprecated. You should instead use PSTCKAPIClient to create tokens.
-// Example: [Paystack createTokenWithCard:card completion:completion];
-// becomes [[PSTCKAPIClient sharedClient] createTokenWithCard:card completion:completion];
-@interface Paystack (Deprecated)
-
-/**
- *  Securely convert your user's credit card details into a Paystack token, which you can then safely store on your server and use to charge the user. The URL
- *connection will run on the main queue. Uses the value of [Paystack defaultPublishableKey] for authentication.
- *
- *  @param card    The user's card details. @see PSTCKCard
- *  @param handler Code to run when the user's card has been turned into a Paystack token.
- *  @deprecated    Use PSTCKAPIClient instead.
- */
-+ (void)createTokenWithCard:(nonnull PSTCKCard *)card completion:(nullable PSTCKCompletionBlock)handler __attribute__((deprecated));
-
-/**
- *  Securely convert your user's credit card details into a Paystack token, which you can then safely store on your server and use to charge the user. The URL
- *connection will run on the main queue.
- *
- *  @param card           The user's card details. @see PSTCKCard
- *  @param publishableKey The API key to use to authenticate with Paystack. Get this at https://paystack.com/account/apikeys .
- *  @param handler        Code to run when the user's card has been turned into a Paystack token.
- *  @deprecated           Use PSTCKAPIClient instead.
- */
-+ (void)createTokenWithCard:(nonnull PSTCKCard *)card publishableKey:(nonnull NSString *)publishableKey completion:(nullable PSTCKCompletionBlock)handler __attribute__((deprecated));
-
-/**
- *  Securely convert your user's credit card details into a Paystack token, which you can then safely store on your server and use to charge the user.
- *
- *  @param card    The user's card details. @see PSTCKCard
- *  @param queue   The operation queue on which to run completion blocks passed to the api client. 
- *  @param handler Code to run when the user's card has been turned into a Paystack token.
- *  @deprecated    Use PSTCKAPIClient instead.
- */
-+ (void)createTokenWithCard:(nonnull PSTCKCard *)card operationQueue:(nonnull NSOperationQueue *)queue completion:(nullable PSTCKCompletionBlock)handler __attribute__((deprecated));
-
-/**
- *  Securely convert your user's credit card details into a Paystack token, which you can then safely store on your server and use to charge the user.
- *
- *  @param card           The user's card details. @see PSTCKCard
- *  @param publishableKey The API key to use to authenticate with Paystack. Get this at https://paystack.com/account/apikeys .
- *  @param queue          The operation queue on which to run completion blocks passed to the api client. 
- *  @param handler        Code to run when the user's card has been turned into a Paystack token.
- *  @deprecated           Use PSTCKAPIClient instead.
- */
-+ (void)createTokenWithCard:(nonnull PSTCKCard *)card
-             publishableKey:(nonnull NSString *)publishableKey
-             operationQueue:(nonnull NSOperationQueue *)queue
-                 completion:(nullable PSTCKCompletionBlock)handler __attribute__((deprecated));
+- (void)      chargeCard:(nonnull PSTCKCardParams *)card
+          forTransaction:(nonnull PSTCKTransactionParams *)transaction
+        onViewController:(nonnull UIViewController *)viewController
+         didEndWithError:(nonnull PSTCKErrorCompletionBlock)errorCompletion
+    didRequestValidation:(nullable PSTCKTransactionCompletionBlock)beforeValidateCompletion
+   didTransactionSuccess:(nonnull PSTCKTransactionCompletionBlock)successCompletion;
 
 @end

@@ -16,6 +16,7 @@ typedef NS_ENUM(NSInteger, PSTCKErrorCode) {
     PSTCKAPIError = 60,            // General-purpose API error (should be rare).
     PSTCKCardError = 70,           // Something was wrong with the given card (most common).
     PSTCKCheckoutError = 80,       // Paystack Checkout encountered an error.
+    PSTCKTransactionError = 90,    // Something was wrong with the given transaction details.
 };
 
 #pragma mark userInfo keys
@@ -53,7 +54,9 @@ FOUNDATION_EXPORT NSString * __nonnull const PSTCKIncorrectCVC;
 #define PSTCKCardErrorInvalidExpMonthUserMessage                                                                                                                 \
     NSLocalizedString(@"Your card's expiration month is invalid", @"Error when the card's expiration month is not valid")
 #define PSTCKCardErrorInvalidExpYearUserMessage                                                                                                                  \
-    NSLocalizedString(@"Your card's expiration year is invalid", @"Error when the card's expiration year is not valid")
+NSLocalizedString(@"Your card's expiration year is invalid", @"Error when the card's expiration year is not valid")
+#define PSTCKTransactionErrorDontSetCustomFieldDirectlyMessage                                                                                                                  \
+    NSLocalizedString(@"Please use the setCustomField function", @"Error when the app attempts to set the custom_fields key directly")
 #define PSTCKCardErrorExpiredCardUserMessage NSLocalizedString(@"Your card has expired", @"Error when the card has already expired")
 #define PSTCKCardErrorDeclinedUserMessage NSLocalizedString(@"Your card was declined", @"Error when the card was declined by the credit card networks")
 #define PSTCKUnexpectedError                                                                                                                                     \

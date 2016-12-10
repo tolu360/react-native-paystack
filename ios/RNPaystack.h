@@ -15,6 +15,7 @@
 - (BOOL)isCardValid:(PSTCKCardParams *)card;
 - (BOOL)cardParamsAreValid:(NSString *)cardNumber withMonth:(NSString *)expMonth withYear:(NSString *)expYear andWithCvc:(NSString *)cvc;
 - (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4;
+- (NSMutableDictionary*)setReferenceMsg:(NSString *)reference;
 
 @end
   

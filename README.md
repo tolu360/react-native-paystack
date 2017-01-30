@@ -29,8 +29,8 @@ yarn add react-native-paystack
 ```
 
 ### Versioning
-For `RN <=0.39` use version 2+ e.g. react-native-paystack@2.1.4
-For `RN >=0.40` use version 3+ e.g. react-native-paystack@3.0.4
+- For `RN <=0.39` use version 2+ e.g. react-native-paystack@2.1.4
+- For `RN >=0.40` use version 3+ e.g. react-native-paystack@3.0.4
 
 ### Configuration
 

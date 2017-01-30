@@ -1,7 +1,7 @@
 #import <Paystack/Paystack.h>
 #import "RNPaystack.h"
-#import "RCTUtils.h"
-#import "RCTLog.h"
+#import <React/RCTUtils.h>
+#import <React/RCTLog.h>
 
 @implementation RNPaystack
 {

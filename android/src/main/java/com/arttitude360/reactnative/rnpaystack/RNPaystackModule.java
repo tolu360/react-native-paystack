@@ -10,9 +10,8 @@ import android.util.Patterns;
 import co.paystack.android.Paystack;
 import co.paystack.android.PaystackSdk;
 import co.paystack.android.model.Card;
-import co.paystack.android.model.Token;
 import co.paystack.android.model.Charge;
-import co.paystack.android.model.Transaction;
+import co.paystack.android.Transaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +30,6 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 public class RNPaystackModule extends ReactContextBaseJavaModule {
 
-    protected Token token;
     protected Card card;
     private Charge charge;
     private Transaction transaction;
@@ -66,23 +64,6 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getToken(ReadableMap cardData, final Promise promise) {
-        
-        this.pendingPromise = promise;
-
-        String cardNumber = cardData.getString("cardNumber");
-        String expiryMonth = cardData.getString("expiryMonth");
-        String expiryYear = cardData.getString("expiryYear");
-        String cvc = cardData.getString("cvc");
-
-        validateCard(cardNumber, expiryMonth, expiryYear, cvc);
-        
-        if (card != null && card.isValid()) {
-            createToken(card);
-        } 
-    }
-
-    @ReactMethod
     public void chargeCard(ReadableMap cardData, final Promise promise) {
 
         this.chargeOptions = null;
@@ -90,7 +71,27 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
         this.pendingPromise = promise;
         this.chargeOptions = cardData;
 
-        validateTransaction();
+        validateFullTransaction();
+
+        if (card != null && card.isValid()) {
+            try {
+                createTransaction();
+            } catch(Exception error) {
+                rejectPromise("E_CHARGE_ERROR", error.getMessage());
+            }
+            
+        }
+    }
+
+    @ReactMethod
+    public void chargeCardWithAccessCode(ReadableMap cardData, final Promise promise) {
+
+        this.chargeOptions = null;
+        
+        this.pendingPromise = promise;
+        this.chargeOptions = cardData;
+
+        validateAccessCodeTransaction();
 
         if (card != null && card.isValid()) {
             try {
@@ -169,7 +170,23 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
         }
     }
 
-    private void validateTransaction() {
+    private void validateAccessCodeTransaction() {
+        String cardNumber = chargeOptions.getString("cardNumber");
+        String expiryMonth = chargeOptions.getString("expiryMonth");
+        String expiryYear = chargeOptions.getString("expiryYear");
+        String cvc = chargeOptions.getString("cvc");
+
+        validateCard(cardNumber, expiryMonth, expiryYear, cvc);
+
+        charge = new Charge();
+        charge.setCard(card);
+
+        if (hasStringKey("accessCode")) {
+            charge.setAccessCode(chargeOptions.getString("accessCode"));
+        }
+    }
+
+    private void validateFullTransaction() {
         
         String cardNumber = chargeOptions.getString("cardNumber");
         String expiryMonth = chargeOptions.getString("expiryMonth");
@@ -232,23 +249,6 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
 
     }
 
-    private void createToken(Card card) {
-
-        //then create token using PaystackSdk class
-        PaystackSdk.createToken(card, new Paystack.TokenCallback() {
-            @Override
-            public void onCreate(Token token) {
-                //here you retrieve the token, and send to your server for charging.
-                resolvePromise(buildSuccessMsg(token.token, token.last4));      
-            }
-
-            @Override
-            public void onError(Throwable error) {
-                rejectPromise("E_TOKEN_ERROR", error.getMessage());
-            }
-        });
-    }
-
     private void createTransaction() {
         
         transaction = null;
@@ -262,7 +262,7 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
                 RNPaystackModule.this.transaction = transaction;
 
                 WritableMap map = Arguments.createMap();
-                map.putString("reference", transaction.reference);
+                map.putString("reference", transaction.getReference());
 
                 resolvePromise(map);
             }
@@ -276,12 +276,12 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
             }
 
             @Override
-            public void onError(Throwable error) {
+            public void onError(Throwable error, Transaction transaction) {
                
                 if (RNPaystackModule.this.transaction == null) {
                     rejectPromise("E_TRANSACTION_ERROR", error.getMessage());
                 } else {
-                    rejectPromise("E_TRANSACTION_ERROR", transaction.reference + " concluded with error: " + error.getMessage());
+                    rejectPromise("E_TRANSACTION_ERROR", transaction.getReference() + " concluded with error: " + error.getMessage());
                 }
             }
 

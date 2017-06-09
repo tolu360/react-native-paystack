@@ -10,6 +10,8 @@
  */
 @interface PSTCKTransactionParams : NSObject<PSTCKFormEncodable>
 
+@property (nonatomic, copy, nonnull) NSString *access_code;
+
 @property (nonatomic, copy, nonnull) NSString *email;
 @property (nonatomic) NSUInteger amount;
 @property (nonatomic, copy, nullable) NSString *reference;

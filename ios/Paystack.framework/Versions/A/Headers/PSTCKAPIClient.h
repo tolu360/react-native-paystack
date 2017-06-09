@@ -8,7 +8,8 @@
 #import <UIKit/UIViewController.h>
 #endif
 
-static NSString *const __nonnull PSTCKSDKVersion = @"2.2.0";
+static NSString *const __nonnull PSTCKSDKVersion = @"3.0.4";
+static NSString *const __nonnull PSTCKSDKBuild = @"13";
 
 @class PSTCKCard, PSTCKCardParams, PSTCKTransactionParams, PSTCKToken;
 
@@ -18,9 +19,9 @@ static NSString *const __nonnull PSTCKSDKVersion = @"2.2.0";
  *  @param token The Paystack token from the response. Will be nil if an error occurs. @see PSTCKToken
  *  @param error The error returned from the response, or nil in one occurs. @see PaystackError.h for possible values.
  */
-typedef void (^PSTCKTokenCompletionBlock)(PSTCKToken * __nullable token, NSError * __nullable error);
-typedef void (^PSTCKErrorCompletionBlock)(NSError * __nonnull error);
+typedef void (^PSTCKErrorCompletionBlock)(NSError * __nonnull error, NSString * __nullable reference);
 typedef void (^PSTCKTransactionCompletionBlock)(NSString * __nonnull reference);
+typedef void (^PSTCKNotifyCompletionBlock)();
 
 /**
  A top-level class that imports the rest of the Paystack SDK. This class used to contain several methods to create Paystack tokens, but those are now deprecated in
@@ -32,28 +33,28 @@ typedef void (^PSTCKTransactionCompletionBlock)(NSString * __nonnull reference);
  *  Set your Paystack API key with this method. New instances of PSTCKAPIClient will be initialized with this value. You should call this method as early as
  *  possible in your application's lifecycle, preferably in your AppDelegate.
  *
- *  @param   publishableKey Your publishable key, obtained from https://paystack.com/account/apikeys
+ *  @param   publicKey Your public key, obtained from https://paystack.com/account/apikeys
  *  @warning Make sure not to ship your test API keys to the App Store! This will log a warning if you use your test key in a release build.
  */
-+ (void)setDefaultPublishableKey:(nonnull NSString *)publishableKey;
++ (void)setDefaultPublicKey:(nonnull NSString *)publicKey;
 
-/// The current default publishable key.
-+ (nullable NSString *)defaultPublishableKey;
+/// The current default public key.
++ (nullable NSString *)defaultPublicKey;
 @end
 
 /// A client for making connections to the Paystack API.
 @interface PSTCKAPIClient : NSObject
 
 /**
- *  A shared singleton API client. Its API key will be initially equal to [Paystack defaultPublishableKey].
+ *  A shared singleton API client. Its API key will be initially equal to [Paystack defaultPublicKey].
  */
 + (nonnull instancetype)sharedClient;
-- (nonnull instancetype)initWithPublishableKey:(nonnull NSString *)publishableKey NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithPublicKey:(nonnull NSString *)publicKey NS_DESIGNATED_INITIALIZER;
 
 /**
- *  @see [Paystack setDefaultPublishableKey:]
+ *  @see [Paystack setDefaultPublicKey:]
  */
-@property (nonatomic, copy, nullable) NSString *publishableKey;
+@property (nonatomic, copy, nullable) NSString *publicKey;
 
 /**
  *  The operation queue on which to run completion blocks passed to the api client. Defaults to [NSOperationQueue mainQueue].
@@ -67,18 +68,32 @@ typedef void (^PSTCKTransactionCompletionBlock)(NSString * __nonnull reference);
 @interface PSTCKAPIClient (CreditCards)
 
 /**
- *  Converts an PSTCKCardParams object into a Paystack token using the Paystack API.
+ *  Charges a PSTCKCardParams object using the Paystack API.
  *
  *  @param card        The user's card details. Cannot be nil. @see https://paystack.com/docs/api#create_card_token
- *  @param completion  The callback to run with the returned Paystack token (and any errors that may have occurred).
  */
-- (void)createTokenWithCard:(nonnull PSTCKCardParams *)card completion:(nullable PSTCKTokenCompletionBlock)completion;
+- (void)      chargeCard:(nonnull PSTCKCardParams *)card
+          forTransaction:(nonnull PSTCKTransactionParams *)transaction
+        onViewController:(nonnull UIViewController *)viewController
+         didEndWithError:(nonnull PSTCKErrorCompletionBlock)errorCompletion
+    didRequestValidation:(nonnull PSTCKTransactionCompletionBlock)beforeValidateCompletion
+   didTransactionSuccess:(nonnull PSTCKTransactionCompletionBlock)successCompletion;
 
 - (void)      chargeCard:(nonnull PSTCKCardParams *)card
           forTransaction:(nonnull PSTCKTransactionParams *)transaction
         onViewController:(nonnull UIViewController *)viewController
          didEndWithError:(nonnull PSTCKErrorCompletionBlock)errorCompletion
-    didRequestValidation:(nullable PSTCKTransactionCompletionBlock)beforeValidateCompletion
+    didRequestValidation:(nonnull PSTCKTransactionCompletionBlock)beforeValidateCompletion
+       willPresentDialog:(nonnull PSTCKNotifyCompletionBlock)showingDialogCompletion
+         dismissedDialog:(nonnull PSTCKNotifyCompletionBlock)dialogDismissedCompletion
+   didTransactionSuccess:(nonnull PSTCKTransactionCompletionBlock)successCompletion;
+
+- (void)      chargeCard:(nonnull PSTCKCardParams *)card
+          forTransaction:(nonnull PSTCKTransactionParams *)transaction
+        onViewController:(nonnull UIViewController *)viewController
+         didEndWithError:(nonnull PSTCKErrorCompletionBlock)errorCompletion
+       willPresentDialog:(nonnull PSTCKNotifyCompletionBlock)showingDialogCompletion
+         dismissedDialog:(nonnull PSTCKNotifyCompletionBlock)dialogDismissedCompletion
    didTransactionSuccess:(nonnull PSTCKTransactionCompletionBlock)successCompletion;
 
 @end

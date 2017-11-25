@@ -13,7 +13,7 @@ for Android & iOS by [Arttitude 360](http://www.arttitude360.com)
 
 ## 1. Description
 
-This React Native module provides a wrapper to add Paystack Payments to your React Native application using the [Paystack Android Mobile SDK](https://github.com/PaystackHQ/paystack-android) and the [Paystack iOS Mobile SDK](https://github.com/PaystackHQ/paystack-ios) libraries.
+This React Native module provides a wrapper to add Paystack Payments to your React Native application using the [Paystack Android Mobile SDK](https://github.com/PaystackHQ/paystack-android) and the [Paystack iOS Mobile SDK](https://github.com/PaystackHQ/paystack-ios) libraries. If interested, there is a [Sample App](https://github.com/tolu360/vestarapp).
 
 ## 2. Installation
 
@@ -29,8 +29,8 @@ yarn add react-native-paystack
 ```
 
 ### Versioning
-- For `RN <=0.39` use version 2+ e.g. react-native-paystack@2.2.0
-- For `RN >=0.40` use version 3+ e.g. react-native-paystack@3.1.0
+- For `RN <=0.39` use version 2+ e.g. react-native-paystack@2.2.0 (No longer updated)
+- For `RN >=0.40` use version 3+ e.g. react-native-paystack@3.1.4
 
 ### Configuration
 
@@ -89,6 +89,15 @@ protected List<ReactPackage> getPackages() {
 }
 ``` 
 
+#### More Config (Android v3.1.4+)
+- Update Gradle plugin to v3.0.0 for your app, follow the following steps if you are not sure how:
+  * Edit your `~ android/build.gradle` to look similar to [build.gradle](https://github.com/tolu360/vestarapp/blob/master/android/build.gradle)
+  * Edit your `~ android/gradle/wrapper/gradle-wrapper.properties` to look similar to [gradle-wrapper.properties](https://github.com/tolu360/vestarapp/blob/master/android/gradle/wrapper/gradle-wrapper.properties)
+
+- Update your Android build tools and environment to v27+ after the Gradle plugin update
+  * Edit your `~ android/app/build.gradle` to look similar to [build.gradle](https://github.com/tolu360/vestarapp/blob/master/android/app/build.gradle)
+
+
 ## 3. Usage
 
 ### Import Library
@@ -107,7 +116,7 @@ protected List<ReactPackage> getPackages() {
 }
 ```
 
-- For Android, add the following tag in your `android/app/src/main/AndroidManifest.xml` file:
+- For Android, add the following tag in your `android/app/src/main/AndroidManifest.xml` file within the `<application></application>` tags:
 
 ```xml
   <meta-data android:name="co.paystack.android.PublicKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
@@ -260,6 +269,8 @@ Perhaps needless to say, this module leverages the [Paystack Android SDK](https:
 + 3.1.0: Retired support for `getToken` on both platforms.
 + 3.1.0: Added support for `chargeCardWithAccessCode` on both platforms.
 + 3.1.0: Upgraded to v3.*+ of both the Paystack iOS and Android SDKs.
++ 3.1.1: Fix for breaking change in RN v0.47+
+* 3.1.4: Miscellaneous and dependencies update on Android
 
 ## 6. License
 

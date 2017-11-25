@@ -277,8 +277,9 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onError(Throwable error, Transaction transaction) {
+                RNPaystackModule.this.transaction = transaction;
                
-                if (RNPaystackModule.this.transaction == null) {
+                if (transaction.getReference() == null) {
                     rejectPromise("E_TRANSACTION_ERROR", error.getMessage());
                 } else {
                     rejectPromise("E_TRANSACTION_ERROR", transaction.getReference() + " concluded with error: " + error.getMessage());

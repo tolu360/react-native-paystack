@@ -7,6 +7,14 @@
 {
     RCTPromiseResolveBlock _resolve;
     RCTPromiseRejectBlock _reject;
+    NSString *publicKey;
+}
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        requestIsCompleted = YES;
+    }
+    return self;
 }
 
 RCT_EXPORT_MODULE();
@@ -90,6 +98,11 @@ RCT_EXPORT_MODULE();
 
     return YES;
 
+}
+
+RCT_EXPORT_METHOD(init:(NSDictionary *)options) {
+    publicKey = options[@"publicKey"];
+    [Paystack setDefaultPublicKey:publicKey];
 }
 
 RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params 

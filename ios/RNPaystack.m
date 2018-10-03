@@ -8,6 +8,7 @@
     RCTPromiseResolveBlock _resolve;
     RCTPromiseRejectBlock _reject;
     NSString *publicKey;
+    BOOL requestIsCompleted;
 }
 
 - (instancetype)init {
@@ -112,6 +113,13 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
     _reject = reject;
     UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
+    if(!requestIsCompleted) {
+        _reject(@"E_BUSY", @"Another request is still being processed, please wait", nil);
+        return;
+    }
+
+    requestIsCompleted = NO;
+
     dispatch_async(dispatch_get_main_queue(), ^{
         if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
 
@@ -162,6 +170,7 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
                                forTransaction:transactionParams
                             onViewController:rootViewController
                               didEndWithError:^(NSError *error, NSString *reference){
+                                                requestIsCompleted = YES;
                                                 if (_reject) {
                                                     _reject(@"E_CHARGE_ERROR", @"Error charging card", error);
                                                 }
@@ -171,6 +180,7 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
                                                 NSLog(@"- RNPaystack: an OTP was requested, transaction has not yet succeeded");
                                             }
                         didTransactionSuccess: ^(NSString *reference){
+                                                requestIsCompleted = YES;
                                                 // transaction may have succeeded, please verify on server
                                                 NSLog(@"- RNPaystack: transaction may have succeeded, please verify on server");
                                                 NSMutableDictionary *returnInfo = [self setReferenceMsg:reference];
@@ -181,7 +191,7 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
                 }];
 
             } else {
-                // NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
+                requestIsCompleted = YES;
 
                 if (_reject) {
                     _reject(@"E_INVALID_CARD", @"Card is invalid", nil);
@@ -199,6 +209,13 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
     _resolve = resolve;
     _reject = reject;
     UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+
+    if(!requestIsCompleted) {
+        _reject(@"E_BUSY", @"Another request is still being processed, please wait", nil);
+        return;
+    }
+
+    requestIsCompleted = NO;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
@@ -225,6 +242,7 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
                                forTransaction:transactionParams
                             onViewController:rootViewController
                               didEndWithError:^(NSError *error, NSString *reference){
+                                                requestIsCompleted = YES;
                                                 if (_reject) {
                                                     _reject(@"E_CHARGE_ERROR", @"Error charging card", error);
                                                 }
@@ -234,6 +252,7 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
                                                 NSLog(@"- RNPaystack: an OTP was requested, transaction has not yet succeeded");
                                             }
                         didTransactionSuccess: ^(NSString *reference){
+                                                requestIsCompleted = YES;
                                                 // transaction may have succeeded, please verify on server
                                                 NSLog(@"- RNPaystack: transaction may have succeeded, please verify on server");
                                                 NSMutableDictionary *returnInfo = [self setReferenceMsg:reference];
@@ -244,7 +263,7 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
                 }];
 
             } else {
-                // NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
+                requestIsCompleted = YES;
 
                 if (_reject) {
                     _reject(@"E_INVALID_CARD", @"Card is invalid", nil);

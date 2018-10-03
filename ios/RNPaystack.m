@@ -3,7 +3,7 @@
 #import <React/RCTUtils.h>
 #import <React/RCTLog.h>
 
-@implementation RNPaystack
+@implementation RNPaystackModule
 {
     RCTPromiseResolveBlock _resolve;
     RCTPromiseRejectBlock _reject;

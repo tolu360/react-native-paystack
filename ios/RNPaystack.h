@@ -3,7 +3,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTEventDispatcher.h>
 
-@interface RNPaystack : NSObject <RCTBridgeModule>
+@interface RNPaystackModule : NSObject <RCTBridgeModule>
 
 @property (nonatomic) NSString *errorMsg;
 @property (nonatomic) NSString *errorCode;

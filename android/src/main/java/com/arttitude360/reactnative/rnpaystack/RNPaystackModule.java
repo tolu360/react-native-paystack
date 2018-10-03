@@ -40,7 +40,7 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
 
     public static final String TAG = "RNPaystack";
 
-    public static String REACT_CLASS = "RNPaystack";
+    public static String REACT_CLASS = "RNPaystackModule";
 
     public RNPaystackModule(ReactApplicationContext reactContext) {
         super(reactContext);

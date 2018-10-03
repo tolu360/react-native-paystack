@@ -4,8 +4,7 @@
   "main": "index.js",
   "author": "Tolu Olowu (Arttitude 360) <tolu@arttitude360.com>",
   "version": "3.1.4",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/tolu360/react-native-paystack"
@@ -26,9 +25,8 @@
     "payments"
   ],
   "peerDependencies": {
-    "react": ">=15.4.0 || ^16.0.0-alpha",
+    "react": ">=15.4.0 || >=16.x",
     "react-native": ">=0.40.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

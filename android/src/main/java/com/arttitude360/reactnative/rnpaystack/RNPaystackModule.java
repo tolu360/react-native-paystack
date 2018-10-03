@@ -37,15 +37,23 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
     private ReactApplicationContext reactContext;
     private Promise pendingPromise;
     private ReadableMap chargeOptions;
+    private String mPublicKey;
 
     public static final String TAG = "RNPaystack";
 
     public static String REACT_CLASS = "RNPaystackModule";
 
+    private static RNPaystackModule sInstance = null;
+
+    public static RNPaystackModule getInstance() {
+        return sInstance;
+    }
+
     public RNPaystackModule(ReactApplicationContext reactContext) {
         super(reactContext);
 
         this.reactContext = reactContext;
+        sInstance = this;
 
         // Initialize PaystackSdk
         PaystackSdk.initialize(this.reactContext);
@@ -56,18 +64,21 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
         return REACT_CLASS;
     }
 
-    protected WritableMap buildSuccessMsg(String token, String lastDigits) {
-        WritableMap successData = new WritableNativeMap();
-        successData.putString("token", token);
-        successData.putString("last4", lastDigits);
-        return successData;
+    @ReactMethod
+    public void init(ReadableMap options) {
+        String newPublicKey = options.getString("publicKey");
+
+        if (newPublicKey != null) {
+            mPublicKey = newPublicKey;
+            PaystackSdk.setPublicKey(newPublicKey);
+        }
     }
 
     @ReactMethod
     public void chargeCard(ReadableMap cardData, final Promise promise) {
 
         this.chargeOptions = null;
-        
+
         this.pendingPromise = promise;
         this.chargeOptions = cardData;
 
@@ -76,10 +87,10 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
         if (card != null && card.isValid()) {
             try {
                 createTransaction();
-            } catch(Exception error) {
+            } catch (Exception error) {
                 rejectPromise("E_CHARGE_ERROR", error.getMessage());
             }
-            
+
         }
     }
 
@@ -87,7 +98,7 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
     public void chargeCardWithAccessCode(ReadableMap cardData, final Promise promise) {
 
         this.chargeOptions = null;
-        
+
         this.pendingPromise = promise;
         this.chargeOptions = cardData;
 
@@ -96,10 +107,10 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
         if (card != null && card.isValid()) {
             try {
                 createTransaction();
-            } catch(Exception error) {
+            } catch (Exception error) {
                 rejectPromise("E_CHARGE_ERROR", error.getMessage());
             }
-            
+
         }
     }
 
@@ -110,7 +121,7 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        //build card object with ONLY the number, update the other fields later
+        // build card object with ONLY the number, update the other fields later
         card = new Card.Builder(cardNumber, 0, 0, "").build();
 
         if (!card.validNumber()) {
@@ -118,16 +129,16 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        //validate cvc
+        // validate cvc
         if (isEmpty(cvc)) {
             rejectPromise("E_INVALID_CVC", "Empty CVC");
             return;
         }
-        
-        //update the cvc field of the card
+
+        // update the cvc field of the card
         card.setCvc(cvc);
 
-        //check that it's valid
+        // check that it's valid
         if (!card.validCVC()) {
             rejectPromise("E_INVALID_CVC", "Invalid CVC");
             return;
@@ -139,13 +150,13 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
         } catch (Exception ignored) {
         }
 
-        //validate expiry month
+        // validate expiry month
         if (month < 1) {
             rejectPromise("E_INVALID_MONTH", "Invalid expiration month");
             return;
         }
 
-        //update the expiryMonth field of the card
+        // update the expiryMonth field of the card
         card.setExpiryMonth(month);
 
         int year = -1;
@@ -154,16 +165,16 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
         } catch (Exception ignored) {
         }
 
-        //validate expiry year      
+        // validate expiry year
         if (year < 1) {
             rejectPromise("E_INVALID_YEAR", "Invalid expiration year");
             return;
         }
 
-        //update the expiryYear field of the card
+        // update the expiryYear field of the card
         card.setExpiryYear(year);
 
-        //validate expiry
+        // validate expiry
         if (!card.validExpiryDate()) {
             rejectPromise("E_INVALID_DATE", "Invalid expiration date");
             return;
@@ -187,7 +198,7 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
     }
 
     private void validateFullTransaction() {
-        
+
         String cardNumber = chargeOptions.getString("cardNumber");
         String expiryMonth = chargeOptions.getString("expiryMonth");
         String expiryYear = chargeOptions.getString("expiryYear");
@@ -250,14 +261,14 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
     }
 
     private void createTransaction() {
-        
+
         transaction = null;
         Activity currentActivity = getCurrentActivity();
 
         PaystackSdk.chargeCard(currentActivity, charge, new Paystack.TransactionCallback() {
             @Override
             public void onSuccess(Transaction transaction) {
-                
+
                 // This is called only after transaction is successful
                 RNPaystackModule.this.transaction = transaction;
 
@@ -278,11 +289,12 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
             @Override
             public void onError(Throwable error, Transaction transaction) {
                 RNPaystackModule.this.transaction = transaction;
-               
+
                 if (transaction.getReference() == null) {
                     rejectPromise("E_TRANSACTION_ERROR", error.getMessage());
                 } else {
-                    rejectPromise("E_TRANSACTION_ERROR", transaction.getReference() + " concluded with error: " + error.getMessage());
+                    rejectPromise("E_TRANSACTION_ERROR",
+                            transaction.getReference() + " concluded with error: " + error.getMessage());
                 }
             }
 
@@ -314,5 +326,5 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
             this.pendingPromise = null;
         }
     }
-       
+
 }

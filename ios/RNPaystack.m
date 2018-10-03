@@ -110,6 +110,7 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
 {
     _resolve = resolve;
     _reject = reject;
+    UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
@@ -120,7 +121,6 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
             }
 
         } else {
-            UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
             PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
             cardParams.number = params[@"cardNumber"];
@@ -198,6 +198,7 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
 {
     _resolve = resolve;
     _reject = reject;
+    UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
@@ -208,7 +209,6 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
             }
 
         } else {
-            UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
 
             PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
             cardParams.number = params[@"cardNumber"];

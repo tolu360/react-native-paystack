@@ -8,20 +8,20 @@
 #import <UIKit/UIViewController.h>
 #endif
 
-static NSString *const __nonnull PSTCKSDKVersion = @"3.0.4";
-static NSString *const __nonnull PSTCKSDKBuild = @"13";
+static NSString *const __nonnull PSTCKSDKVersion = @"3.0.5";
+static NSString *const __nonnull PSTCKSDKBuild = @"14";
 
 @class PSTCKCard, PSTCKCardParams, PSTCKTransactionParams, PSTCKToken;
 
 /**
  *  A callback to be run with a token response from the Paystack API.
  *
- *  @param token The Paystack token from the response. Will be nil if an error occurs. @see PSTCKToken
+ *  @param reference The Transaction reference from the response. Will be nil if an error occurs.
  *  @param error The error returned from the response, or nil in one occurs. @see PaystackError.h for possible values.
  */
 typedef void (^PSTCKErrorCompletionBlock)(NSError * __nonnull error, NSString * __nullable reference);
 typedef void (^PSTCKTransactionCompletionBlock)(NSString * __nonnull reference);
-typedef void (^PSTCKNotifyCompletionBlock)();
+typedef void (^PSTCKNotifyCompletionBlock)(void);
 
 /**
  A top-level class that imports the rest of the Paystack SDK. This class used to contain several methods to create Paystack tokens, but those are now deprecated in

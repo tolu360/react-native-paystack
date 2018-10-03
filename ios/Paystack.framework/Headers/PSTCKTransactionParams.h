@@ -26,6 +26,14 @@
                    forKey:(nonnull NSString*)key
                     error:(NSError * _Nullable __autoreleasing * _Nonnull) error;
 
+- (nullable PSTCKTransactionParams *) setMetadataValueDict:(nonnull NSMutableDictionary*)dict
+                   forKey:(nonnull NSString*)key
+                    error:(NSError * _Nullable __autoreleasing * _Nonnull) error;
+
+- (nullable PSTCKTransactionParams *) setMetadataValueArray:(nonnull NSMutableArray*)arr
+                   forKey:(nonnull NSString*)key
+                    error:(NSError * _Nullable __autoreleasing * _Nonnull) error;
+
 - (nullable PSTCKTransactionParams *) setCustomFieldValue:(nonnull NSString*)value
                  displayedAs:(nonnull NSString*)display_name
                        error:(NSError * _Nullable __autoreleasing * _Nonnull) error;

@@ -18,6 +18,10 @@
     return self;
 }
 
+- (dispatch_queue_t)methodQueue {
+    return dispatch_get_main_queue();
+}
+
 RCT_EXPORT_MODULE();
 
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
@@ -119,88 +123,85 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
     }
 
     requestIsCompleted = NO;
+    
+    if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
+        // NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
+        if (_reject) {
+            _reject(self.errorCode, self.errorMsg, nil);
+        }
 
-            // NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
-            if (_reject) {
-                _reject(self.errorCode, self.errorMsg, nil);
+    } else {
+
+        PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
+        cardParams.number = params[@"cardNumber"];
+        cardParams.expMonth = [params[@"expiryMonth"] integerValue];
+        cardParams.expYear = [params[@"expiryYear"] integerValue];
+        cardParams.cvc = params[@"cvc"];
+
+        PSTCKTransactionParams *transactionParams = [[PSTCKTransactionParams alloc] init];
+        transactionParams.amount = [params[@"amountInKobo"] integerValue];
+        transactionParams.email = params[@"email"];
+
+        if (params[@"currency"] != nil) {
+            transactionParams.currency = params[@"currency"];
+        }
+
+        if (params[@"plan"] != nil) {
+            transactionParams.plan = params[@"plan"];
+        }            
+
+        if (params[@"subAccount"] != nil) {
+            transactionParams.subaccount = params[@"subAccount"];
+
+            if (params[@"bearer"] != nil) {
+                transactionParams.bearer = params[@"bearer"];
             }
+
+            if (params[@"transactionCharge"] != nil) {
+                transactionParams.transaction_charge = [params[@"transactionCharge"] integerValue];
+            }
+        }
+
+        if (params[@"reference"] != nil) {
+            transactionParams.reference = params[@"reference"];
+        }            
+
+        if ([self isCardValid:cardParams]) {
+            
+            [[PSTCKAPIClient sharedClient] chargeCard:cardParams
+                            forTransaction:transactionParams
+                        onViewController:rootViewController
+                            didEndWithError:^(NSError *error, NSString *reference){
+                                            requestIsCompleted = YES;
+                                            if (_reject) {
+                                                _reject(@"E_CHARGE_ERROR", @"Error charging card", error);
+                                            }
+                                        }
+                        didRequestValidation: ^(NSString *reference){
+                                            // an OTP was requested, transaction has not yet succeeded
+                                            NSLog(@"- RNPaystack: an OTP was requested, transaction has not yet succeeded");
+                                        }
+                    didTransactionSuccess: ^(NSString *reference){
+                                            requestIsCompleted = YES;
+                                            // transaction may have succeeded, please verify on server
+                                            NSLog(@"- RNPaystack: transaction may have succeeded, please verify on server");
+                                            NSMutableDictionary *returnInfo = [self setReferenceMsg:reference];
+
+                                            if (_resolve) {
+                                                _resolve(returnInfo);
+                                            }
+            }];
 
         } else {
+            requestIsCompleted = YES;
 
-            PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
-            cardParams.number = params[@"cardNumber"];
-            cardParams.expMonth = [params[@"expiryMonth"] integerValue];
-            cardParams.expYear = [params[@"expiryYear"] integerValue];
-            cardParams.cvc = params[@"cvc"];
-
-            PSTCKTransactionParams *transactionParams = [[PSTCKTransactionParams alloc] init];
-            transactionParams.amount = [params[@"amountInKobo"] integerValue];
-            transactionParams.email = params[@"email"];
-
-            if (params[@"currency"] != nil) {
-                transactionParams.currency = params[@"currency"];
+            if (_reject) {
+                _reject(@"E_INVALID_CARD", @"Card is invalid", nil);
             }
-
-            if (params[@"plan"] != nil) {
-                transactionParams.plan = params[@"plan"];
-            }            
-
-            if (params[@"subAccount"] != nil) {
-                transactionParams.subaccount = params[@"subAccount"];
-
-                if (params[@"bearer"] != nil) {
-                    transactionParams.bearer = params[@"bearer"];
-                }
-
-                if (params[@"transactionCharge"] != nil) {
-                    transactionParams.transaction_charge = [params[@"transactionCharge"] integerValue];
-                }
-            }
-
-            if (params[@"reference"] != nil) {
-                transactionParams.reference = params[@"reference"];
-            }            
-
-            if ([self isCardValid:cardParams]) {
-                
-                [[PSTCKAPIClient sharedClient] chargeCard:cardParams
-                               forTransaction:transactionParams
-                            onViewController:rootViewController
-                              didEndWithError:^(NSError *error, NSString *reference){
-                                                requestIsCompleted = YES;
-                                                if (_reject) {
-                                                    _reject(@"E_CHARGE_ERROR", @"Error charging card", error);
-                                                }
-                                            }
-                         didRequestValidation: ^(NSString *reference){
-                                                // an OTP was requested, transaction has not yet succeeded
-                                                NSLog(@"- RNPaystack: an OTP was requested, transaction has not yet succeeded");
-                                            }
-                        didTransactionSuccess: ^(NSString *reference){
-                                                requestIsCompleted = YES;
-                                                // transaction may have succeeded, please verify on server
-                                                NSLog(@"- RNPaystack: transaction may have succeeded, please verify on server");
-                                                NSMutableDictionary *returnInfo = [self setReferenceMsg:reference];
-
-                                                if (_resolve) {
-                                                    _resolve(returnInfo);
-                                                }
-                }];
-
-            } else {
-                requestIsCompleted = YES;
-
-                if (_reject) {
-                    _reject(@"E_INVALID_CARD", @"Card is invalid", nil);
-                }
-            }
-        
         }
-       
-    });
+    
+    }     
 }
 
 RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params 
@@ -216,63 +217,61 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
     }
 
     requestIsCompleted = NO;
+    
+    if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
+        // NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
+        if (_reject) {
+            _reject(self.errorCode, self.errorMsg, nil);
+        }
 
-            // NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
-            if (_reject) {
-                _reject(self.errorCode, self.errorMsg, nil);
-            }
+    } else {
+
+        PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
+        cardParams.number = params[@"cardNumber"];
+        cardParams.expMonth = [params[@"expiryMonth"] integerValue];
+        cardParams.expYear = [params[@"expiryYear"] integerValue];
+        cardParams.cvc = params[@"cvc"];
+
+        PSTCKTransactionParams *transactionParams = [[PSTCKTransactionParams alloc] init];
+        transactionParams.access_code = params[@"accessCode"];            
+
+        if ([self isCardValid:cardParams]) {
+            
+            [[PSTCKAPIClient sharedClient] chargeCard:cardParams
+                            forTransaction:transactionParams
+                        onViewController:rootViewController
+                            didEndWithError:^(NSError *error, NSString *reference){
+                                            requestIsCompleted = YES;
+                                            if (_reject) {
+                                                _reject(@"E_CHARGE_ERROR", @"Error charging card", error);
+                                            }
+                                        }
+                        didRequestValidation: ^(NSString *reference){
+                                            // an OTP was requested, transaction has not yet succeeded
+                                            NSLog(@"- RNPaystack: an OTP was requested, transaction has not yet succeeded");
+                                        }
+                    didTransactionSuccess: ^(NSString *reference){
+                                            requestIsCompleted = YES;
+                                            // transaction may have succeeded, please verify on server
+                                            NSLog(@"- RNPaystack: transaction may have succeeded, please verify on server");
+                                            NSMutableDictionary *returnInfo = [self setReferenceMsg:reference];
+
+                                            if (_resolve) {
+                                                _resolve(returnInfo);
+                                            }
+            }];
 
         } else {
+            requestIsCompleted = YES;
 
-            PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
-            cardParams.number = params[@"cardNumber"];
-            cardParams.expMonth = [params[@"expiryMonth"] integerValue];
-            cardParams.expYear = [params[@"expiryYear"] integerValue];
-            cardParams.cvc = params[@"cvc"];
-
-            PSTCKTransactionParams *transactionParams = [[PSTCKTransactionParams alloc] init];
-            transactionParams.access_code = params[@"accessCode"];            
-
-            if ([self isCardValid:cardParams]) {
-                
-                [[PSTCKAPIClient sharedClient] chargeCard:cardParams
-                               forTransaction:transactionParams
-                            onViewController:rootViewController
-                              didEndWithError:^(NSError *error, NSString *reference){
-                                                requestIsCompleted = YES;
-                                                if (_reject) {
-                                                    _reject(@"E_CHARGE_ERROR", @"Error charging card", error);
-                                                }
-                                            }
-                         didRequestValidation: ^(NSString *reference){
-                                                // an OTP was requested, transaction has not yet succeeded
-                                                NSLog(@"- RNPaystack: an OTP was requested, transaction has not yet succeeded");
-                                            }
-                        didTransactionSuccess: ^(NSString *reference){
-                                                requestIsCompleted = YES;
-                                                // transaction may have succeeded, please verify on server
-                                                NSLog(@"- RNPaystack: transaction may have succeeded, please verify on server");
-                                                NSMutableDictionary *returnInfo = [self setReferenceMsg:reference];
-
-                                                if (_resolve) {
-                                                    _resolve(returnInfo);
-                                                }
-                }];
-
-            } else {
-                requestIsCompleted = YES;
-
-                if (_reject) {
-                    _reject(@"E_INVALID_CARD", @"Card is invalid", nil);
-                }
+            if (_reject) {
+                _reject(@"E_INVALID_CARD", @"Card is invalid", nil);
             }
-        
         }
-       
-    });
+    
+    }
+
 }
 
 @end

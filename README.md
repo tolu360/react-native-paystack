@@ -15,6 +15,8 @@ for Android & iOS by [Arttitude 360](http://www.arttitude360.com)
 
 This React Native module provides a wrapper to add Paystack Payments to your React Native application using the [Paystack Android Mobile SDK](https://github.com/PaystackHQ/paystack-android) and the [Paystack iOS Mobile SDK](https://github.com/PaystackHQ/paystack-ios) libraries. If interested, there is a [Sample App](https://github.com/tolu360/vestarapp).
 
+### PS: If you are using this library in production, please give the repo a star - I am not being vain and have no interest in the vanity metric, just trying to figure out if it is still worth the time or effort spent supporting the library. Cheers!
+
 ## 2. Installation
 
 You can pull in react-native-paystack via npm:
@@ -30,7 +32,7 @@ yarn add react-native-paystack
 
 ### Versioning
 - For `RN >=0.40` only;
-- Breaking Change Alert for v3.2.0+. Looking for the docs for the 3.1.* version of this library? [Check here!](./README 3.1.md)
+- Breaking Change Alert for v3.2.0+. Looking for the docs for the 3.1.* version of this library? [Check here!](./README-3-1.md)
 
 ### Configuration
 

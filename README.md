@@ -62,6 +62,7 @@ react-native link react-native-paystack
 - The following steps are optional, should be taken if you have not run `react-native link react-native-paystack` already.
 - In XCode's "Project navigator", right click on project name folder ➜ `Add Files to <...>`. Ensure `Copy items if needed` and `Create groups` are checked
 - Go to `node_modules` ➜ `react-native-paystack/ios` ➜ add `RNPaystack.xcodeproj`.
+- Click on your main project file (the one that represents the .xcodeproj for your project) select `Build Phases` and drag the static library, `libRNPaystack.a` from the `Products` folder inside `RNPaystack.xcodeproj` to `Link Binary With Libraries`. See the [react-native docs](https://facebook.github.io/react-native/docs/linking-libraries-ios.html) for more details.
 
 #### Manual Config (Android)
 

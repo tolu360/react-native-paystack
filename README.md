@@ -102,6 +102,8 @@ protected List<ReactPackage> getPackages() {
 - Update Gradle plugin to v3.0.0+ for your app, follow the following steps if you are not sure how:
   * Edit your `~ android/build.gradle` to look similar to [build.gradle](https://github.com/tolu360/vestarapp/blob/master/android/build.gradle)
   * Edit your `~ android/gradle/wrapper/gradle-wrapper.properties` to look similar to [gradle-wrapper.properties](https://github.com/tolu360/vestarapp/blob/master/android/gradle/wrapper/gradle-wrapper.properties)
+- To avoid build issues, enable `Aapt2` for your project by adding `android.enableAapt2=true` to your `android/gradle.properties` file.
+- If you are using RN with a version lower than 0.57.0, it is important you replace your `node-modules/react-native/react.gradle` file with [this version @ commit da6a5e0](https://github.com/facebook/react-native/blob/da6a5e0439c168147271ef66ad5ebbeebd6fce3b/react.gradle) to avoid further build issues when assembling a release version of your app.
 
 ## 3. Usage
 

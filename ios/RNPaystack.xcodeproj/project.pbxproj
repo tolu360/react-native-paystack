@@ -204,6 +204,7 @@
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../react-native/React/**",
 					"$(SRCROOT)/../../../ios/Paystack/**",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
@@ -223,6 +224,7 @@
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../react-native/React/**",
 					"$(SRCROOT)/../../../ios/Paystack/**",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";

@@ -41,7 +41,24 @@ yarn add react-native-paystack
 ```shell
 react-native link react-native-paystack 
 ```
-- (iOS only): The next steps are necessary for iOS at this time as publishing to NPM seems to break symlinks contained in the Paystack iOS framework shipped with this package, thus causing XCode build errors.
+- (iOS only): The next steps are only applicable to setting up for iOS.
+
+##### Install Paystack iOS SDK via CocoaPods (Option 1 - Recommended)
+- If you do not have CocoaPods already installed on your machine, run `gem install cocoapods` to set it up the first time. (Hint: Go grab a cup of coffee!)
+- If you are not using Cocoapods in your project already, run `cd ios && pod init` at the root directory of your project. Otherwise, jump to next step.
+- Add `pod 'Paystack'` to your Podfile. Otherwise just edit your Podfile to include:
+
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'YOUR_APP_TARGET_NAME' do
+
+  pod 'Paystack'
+
+end
+```
+
+##### Install Paystack iOS SDK via the Framework (Option 2 - Not Recommended)
 - Download a fresh copy of the `Paystack iOS framework` from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/).
 - Extract `Paystack.framework` from the downloaded zip.
 - In XCode's "Project navigator", right click on project name folder ➜ `Add Files to <Your-Project-Name>`. Ensure `Copy items if needed` and `Create groups` are checked and select your copy of `Paystack.framework`.
@@ -49,15 +66,12 @@ react-native link react-native-paystack
 
 <img width=200 title="XCode files tree" src="./file-tree.png">
 
+- Always trust/use the most recent `Paystack.framework` obtained from the [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/) over the version shipped with the library.
+
+#### Other Install Steps for iOS
 - If you are working with XCode 8+, to allow encryptions work properly with the Paystack SDK, you may need to enable `Keychain Sharing` for your app. In the Capabilities pane, if Keychain Sharing isn’t enabled, toggle ON the switch in the Keychain Sharing section.
 
 <img width=400 title="XCode files tree" src="./4_enablekeychain_2x.png">
-
-- Also ensure that the `Paystack.framework` is added to the `Embedded Binaries` on the `General` section of your `Xcode` project settings.
-
-<img width=679 title="XCode files tree" src="./enable_embedded.png">
-
-- Always trust/use the most recent `Paystack.framework` obtained from the [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/) over the version shipped with the library.
 
 #### Manual Config (iOS)
 
@@ -98,7 +112,7 @@ protected List<ReactPackage> getPackages() {
 }
 ``` 
 
-#### More Config (Android v3.1.4+)
+#### More Config (Only applicable to Android using v3.1.4+ & RN less than 0.57.0)
 - Update Gradle plugin to v3.0.0+ for your app, follow the following steps if you are not sure how:
   * Edit your `~ android/build.gradle` to look similar to [build.gradle](https://github.com/tolu360/vestarapp/blob/master/android/build.gradle)
   * Edit your `~ android/gradle/wrapper/gradle-wrapper.properties` to look similar to [gradle-wrapper.properties](https://github.com/tolu360/vestarapp/blob/master/android/gradle/wrapper/gradle-wrapper.properties)
@@ -266,6 +280,7 @@ Perhaps needless to say, this module leverages the [Paystack Android SDK](https:
 + 3.1.1: Fix for breaking change in RN v0.47+
 * 3.1.4: Miscellaneous and dependencies update on Android.
 * 3.2.0: A Breaking Change - Initialize library in JS, rather than in native code.
+* 3.3.0: Move to a CocoaPods Flow for iOS.
 
 ## 6. License
 

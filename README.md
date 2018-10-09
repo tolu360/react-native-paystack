@@ -59,7 +59,7 @@ end
 ```
 
 - Run `pod install` while still in the `/ios` directory of your project. 
-- Exit Xcode if you had it running prior to setting up CocoaPods and only open your project with the `yourprojectname.xcworkspace ` in Xcode subsequently.
+- Exit Xcode if you had it running prior to setting up CocoaPods and only open your project with the `yourprojectname.xcworkspace ` file in Xcode subsequently and throughout the lifespan of your project.
 
 ##### Install Paystack iOS SDK via the Framework (Option 2 - Not Recommended)
 - Download a fresh copy of the `Paystack iOS framework` from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/).

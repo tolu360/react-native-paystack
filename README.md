@@ -43,7 +43,7 @@ react-native link react-native-paystack
 ```
 - (iOS only): The next steps are only applicable to setting up for iOS.
 
-##### Install Paystack iOS SDK via CocoaPods (Option 1 - Recommended)
+##### Install Paystack iOS SDK via CocoaPods (Option 1 - Recommended, Only Available in v3.3+)
 - If you do not have CocoaPods already installed on your machine, run `gem install cocoapods` to set it up the first time. (Hint: Go grab a cup of coffee!)
 - If you are not using Cocoapods in your project already, run `cd ios && pod init` at the root directory of your project. Otherwise, jump to next step.
 - Add `pod 'Paystack'` to your Podfile. Otherwise just edit your Podfile to include:
@@ -57,6 +57,7 @@ target 'YOUR_APP_TARGET_NAME' do
 
 end
 ```
+- Exit Xcode if you had it running prior to setting up CocoaPods and only open your project with the `yourprojectname.xcworkspace ` in Xcode subsequently.
 
 ##### Install Paystack iOS SDK via the Framework (Option 2 - Not Recommended)
 - Download a fresh copy of the `Paystack iOS framework` from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/).

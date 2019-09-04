@@ -36,42 +36,56 @@ yarn add react-native-paystack
 
 ### Configuration
 
-#### Automatic (iOS & Android)
+#### Post-Install Steps (iOS)
 
-```shell
-react-native link react-native-paystack 
-```
-- (iOS only): The next steps are only applicable to setting up for iOS.
-
-##### Install Paystack iOS SDK via CocoaPods (Option 1 - Recommended)
+##### 1) Auto Linking & Cocoapods Integration (React Native 0.59 and lower)
 - If you do not have CocoaPods already installed on your machine, run `gem install cocoapods` to set it up the first time. (Hint: Go grab a cup of coffee!)
-- If you are not using Cocoapods in your project already, run `cd ios && pod init` at the root directory of your project. Otherwise, jump to next step.
-- Add `pod 'Paystack'` to your Podfile. Otherwise just edit your Podfile to include:
+- If you are not using Cocoapods in your project already, run `cd ios && pod init` at the root directory of your project. This would create a `Podfile` in your `ios` directory.
+- Run `react-native link react-native-paystack` at the root directory of your project and ensure you edit your Podfile to look like the sample below (remove all the targets you are not building for, such as Tests and tvOS):
 
 ```ruby
-source 'https://github.com/CocoaPods/Specs.git'
+# platform :ios, '9.0'
 
-target 'YOUR_APP_TARGET_NAME' do
+target '_YOUR_PROJECT_TARGET_' do
 
-  pod 'Paystack'
+  # Pods for _YOUR_PROJECT_TARGET_
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'Core',
+    'CxxBridge',
+    'DevSupport',
+    'RCTText',
+    'RCTImage',
+    'RCTNetwork',
+    'RCTWebSocket',
+    'RCTSettings',
+    'RCTAnimation',
+    'RCTLinkingIOS',
+    # Add any other subspecs you want to use in your project
+    # Remove any subspecs you don't want to use in your project
+  ]
+
+  pod "yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+  # This should already be auto-added for you, if not add the line below
+  pod 'react-native-paystack', :path => '../node_modules/react-native-paystack'
 
 end
 ```
 
-##### Install Paystack iOS SDK via the Framework (Option 2 - Not Recommended)
-- Download a fresh copy of the `Paystack iOS framework` from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/).
-- Extract `Paystack.framework` from the downloaded zip.
-- In XCode's "Project navigator", right click on project name folder ➜ `Add Files to <Your-Project-Name>`. Ensure `Copy items if needed` and `Create groups` are checked and select your copy of `Paystack.framework`.
-- Your files tree in XCode should look similar to the screenshot below:
+- Replace all references to _YOUR_PROJECT_TARGET_ with your project target (it's the same as project name by default).
+- By now, you should be all set to install the packages from your Podfile. Run `pod install` from your `ios` directory.
+- Close Xcode, and then open (double-click) your project's .xcworkspace file to launch Xcode. From this time onwards, you must use the `.xcworkspace` file to open the project. Or just use the `react-native run-ios` command as usual to run your app in the simulator.
 
-<img width=200 title="XCode files tree" src="./file-tree.png">
+##### 2) Auto Linking & Cocoapods Integration (React Native 0.60 and higher)
+Since React Native 0.60 and higher, [autolinking](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md) makes the installation process simpler.
 
-- Always trust/use the most recent `Paystack.framework` obtained from the [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/) over the version shipped with the library.
-
-#### Other Install Steps for iOS
-- If you are working with XCode 8+, to allow encryptions work properly with the Paystack SDK, you may need to enable `Keychain Sharing` for your app. In the Capabilities pane, if Keychain Sharing isn’t enabled, toggle ON the switch in the Keychain Sharing section.
-
-<img width=400 title="XCode files tree" src="./4_enablekeychain_2x.png">
+```sh
+cd ios
+pod install
+```
+- Close Xcode, and then open (double-click) your project's .xcworkspace file to launch Xcode. From this time onwards, you must use the `.xcworkspace` file to open the project. Or just use the `react-native run-ios` command as usual to run your app in the simulator.
 
 #### Manual Config (iOS)
 
@@ -112,7 +126,7 @@ protected List<ReactPackage> getPackages() {
 }
 ``` 
 
-#### More Config (Only applicable to Android using v3.1.4+ & RN less than 0.57.0)
+#### More Config (Only applicable to Android using react-native-paystack v3.1.4+ & RN less than 0.57.0)
 - Update Gradle plugin to v3.0.0+ for your app, follow the following steps if you are not sure how:
   * Edit your `~ android/build.gradle` to look similar to [build.gradle](https://github.com/tolu360/vestarapp/blob/master/android/build.gradle)
   * Edit your `~ android/gradle/wrapper/gradle-wrapper.properties` to look similar to [gradle-wrapper.properties](https://github.com/tolu360/vestarapp/blob/master/android/gradle/wrapper/gradle-wrapper.properties)

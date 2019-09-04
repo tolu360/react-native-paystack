@@ -94,6 +94,12 @@ pod install
 - Go to `node_modules` ➜ `react-native-paystack/ios` ➜ add `RNPaystack.xcodeproj`.
 - Click on your main project file (the one that represents the .xcodeproj for your project) select `Build Phases` and drag the static library, `libRNPaystack.a` from the `Products` folder inside `RNPaystack.xcodeproj` to `Link Binary With Libraries`. See the [react-native docs](https://facebook.github.io/react-native/docs/linking-libraries-ios.html) for more details.
 
+#### Autolinking on Android (React Native 0.59 and lower)
+- Run `react-native link react-native-paystack` at the root directory of your project.
+
+#### Autolinking on Android (React Native 0.60 and higher)
+Since React Native 0.60 and higher, [autolinking](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md) makes the installation process simpler. Nothing more to do here (Gradle has you all set to go) - just head over to usage!
+
 #### Manual Config (Android)
 
 - The following steps are optional, should be taken if you have not run `react-native link react-native-paystack` already.

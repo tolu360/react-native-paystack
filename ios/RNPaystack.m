@@ -170,7 +170,20 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
 
         if (params[@"reference"] != nil) {
             transactionParams.reference = params[@"reference"];
-        }            
+        }
+        
+        // **NEW: Adding Custom Fields to Transaction
+        if (params[@"customField"] != nil) {
+            do {
+                for (NSDictionary *customField in params[@"customField"]) {
+                    if (customField[@"value"] != nil && customField[@"display_name"] != nil) {
+                        try transactionParams.setCustomFieldValue(customField[@"value"], displayedAs: customField[@"display_name"]);
+                    }
+                }
+            } catch {
+                print(error);
+            }
+        }
 
         if ([self isCardValid:cardParams]) {
             

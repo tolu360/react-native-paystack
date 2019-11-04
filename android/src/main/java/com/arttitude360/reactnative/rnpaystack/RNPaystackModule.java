@@ -258,6 +258,23 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
             charge.setReference(chargeOptions.getString("reference"));
         }
 
+        // **NEW: Added this for metadata/custom fields
+        if (hasKey("customField")) {
+            // charge.setReference(chargeOptions.get)
+            ReadableArray customFields = chargeOptions.getArray("customField");
+            if (!customFields.isNull()) {
+                int customFieldListSize = customFields.size();
+                for (int i = 0; i < customFieldListSize; i++) {
+                    ReadableMap customField = customFields.getMap(i);
+                    String displayName = customField.getString("display_name");
+                    String value = customField.getString("value");
+
+                    // Now set paystack custom field.
+                    charge.putCustomField(displayName, value);
+                }
+            }
+        }
+
     }
 
     private void createTransaction() {

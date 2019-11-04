@@ -269,7 +269,11 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
                 String value = customField.getString("value");
 
                 // Now set paystack custom field.
-                charge.putCustomField(displayName, value);
+                try {
+                    charge.putCustomField(displayName, value);
+                } catch (JSONException err) {
+                    Log.d("Custom Field Error", err);
+                }
             }
         }
 

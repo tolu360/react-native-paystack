@@ -272,7 +272,7 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
                 try {
                     charge.putCustomField(displayName, value);
                 } catch (JSONException err) {
-                    Log.d("Custom Field Error", err);
+                    //Log.d("Custom Field Error", err);
                 }
             }
         }

@@ -256,7 +256,7 @@ chargeCard() {
 | transactionCharge (optional) | integer | the amount to be charged on a split-payment, use only when `subAccount` is set |
 | bearer (optional) | string | sets which party bears paystack fees on a split-payment e.g. 'subaccount', use only when `subAccount` is set |
 | reference (optional) | string | sets the transaction reference which must be unique per transaction |
-| customField (optional) | Array | sets the custom fields you want included in the transaction details while viewing on paystack dashboard e.g. `customField: [{display_name: "Your display name", value: "Your set value"}, ..., {display_name: "...", value: "..."}]` [Check the implementation here](#Charging-a-Card-(iOS-&-Android)) |
+| customField (optional) | Array | sets the custom fields you want included in the transaction details while viewing on paystack dashboard e.g. `customField: [{display_name: "Your display name", value: "Your set value"}, ..., {display_name: "...", value: "..."}]` [Check the implementation here](#charging-a-card-ios--android) |
 
 #### Response Object
 

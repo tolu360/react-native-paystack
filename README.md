@@ -151,7 +151,7 @@ RNPaystack.init({ publicKey: 'YOUR_PUBLIC_KEY_HERE' });
 ```
 
 ### Charging a Card with Access Code (iOS & Android)
-It's a cinch to charge a card token using the react-native-paystack module. This is the recommended or the most-preferred workflow favored by the folks at Paystack. Initiate a new transaction on your server side using the appropriate [Paystack endpoint](https://developers.paystack.co/reference#initialize-a-transaction) - obtain an `access_code` and complete the charge on your mobile application. Pls note, the SDK assumes you are responsible for building the card form/UI.
+It's a cinch to charge a card token using the react-native-paystack module. This is the recommended or the most-preferred workflow favored by the folks at Paystack. Initiate a new transaction on your server side using the appropriate [Paystack endpoint](https://developers.paystack.co/reference#transaction-initialize) - obtain an `access_code` and complete the charge on your mobile application. Pls note, the SDK assumes you are responsible for building the card form/UI.
 
 ```javascript
 	RNPaystack.chargeCardWithAccessCode(cardParams);

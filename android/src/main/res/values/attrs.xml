@@ -1,0 +1,5 @@
+<declare-styleable name="ForegroundView">
+    <attr name="foreground" format="color" />
+    <attr name="foregroundGravity" format="integer" />
+    <attr name="foregroundInsidePadding" format="boolean" />
+</declare-styleable>

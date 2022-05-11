@@ -258,6 +258,25 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
             charge.setReference(chargeOptions.getString("reference"));
         }
 
+        // **NEW: Added this for metadata/custom fields
+        if (hasArrayKey("customField")) {
+            // charge.setReference(chargeOptions.get)
+            ReadableArray customFields = chargeOptions.getArray("customField");
+            int customFieldListSize = customFields.size();
+            for (int i = 0; i < customFieldListSize; i++) {
+                ReadableMap customField = customFields.getMap(i);
+                String displayName = customField.getString("display_name");
+                String value = customField.getString("value");
+
+                // Now set paystack custom field.
+                try {
+                    charge.putCustomField(displayName, value);
+                } catch (JSONException err) {
+                    //Log.d("Custom Field Error", err);
+                }
+            }
+        }
+
     }
 
     private void createTransaction() {
@@ -311,6 +330,10 @@ public class RNPaystackModule extends ReactContextBaseJavaModule {
 
     private boolean hasIntKey(String key) {
         return chargeOptions.hasKey(key) && !chargeOptions.isNull(key) && chargeOptions.getInt(key) > 0;
+    }
+
+    private boolean hasArrayKey(String key) {
+        return chargeOptions.hasKey(key) && !chargeOptions.isNull(key) && chargeOptions.getArray(key).size() > 0;
     }
 
     private void rejectPromise(String code, String message) {

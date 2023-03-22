@@ -3,7 +3,7 @@
   "description": "React Native Wrappers for Paystack Android & iOS Mobile SDKs",
   "main": "index.js",
   "author": "Tolu Olowu (Arttitude 360) <tolu@arttitude360.com>",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "scripts": {},
   "repository": {
     "type": "git",

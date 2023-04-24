@@ -130,7 +130,7 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
     requestIsCompleted = NO;
     
     if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
-
+        requestIsCompleted = YES;
         // NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
         if (_reject) {
             _reject(self.errorCode, self.errorMsg, nil);
@@ -170,7 +170,17 @@ RCT_EXPORT_METHOD(chargeCard:(NSDictionary *)params
 
         if (params[@"reference"] != nil) {
             transactionParams.reference = params[@"reference"];
-        }            
+        }
+        
+        // **NEW: Adding Custom Fields to Transaction
+        if (params[@"customField"] != nil) {
+            for (NSDictionary *customField in params[@"customField"]) {
+                if (customField[@"value"] != nil && customField[@"display_name"] != nil) {
+                    NSError * __autoreleasing _Nullable *transactionError = nil;
+                    [transactionParams setCustomFieldValue: customField[@"value"] displayedAs:customField[@"display_name"] error:&transactionError];
+                }
+            }
+        }
 
         if ([self isCardValid:cardParams]) {
             
@@ -224,7 +234,7 @@ RCT_EXPORT_METHOD(chargeCardWithAccessCode:(NSDictionary *)params
     requestIsCompleted = NO;
     
     if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
-
+        requestIsCompleted = YES;
         // NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
         if (_reject) {
             _reject(self.errorCode, self.errorMsg, nil);

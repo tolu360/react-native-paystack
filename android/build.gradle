@@ -41,6 +41,6 @@ dependencies {
     implementation "com.facebook.react:react-native:+"
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'co.paystack.android.design.widget:pinpad:1.0.1'
-    implementation 'co.paystack.android:paystack:3.0.12'   
+    implementation 'co.paystack.android.design.widget:pinpad:1.0.8'
+    implementation 'co.paystack.android:paystack:3.1.3'   
 }

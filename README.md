@@ -223,6 +223,10 @@ chargeCard() {
       email: 'chargeIOS@master.dev',
       amountInKobo: 150000,
       subAccount: 'ACCT_pz61jjjsslnx1d9',
+      customField: [
+        {display_name: "Product", value: "Prada Women Shoe"},
+        {display_name: "Product S/N", value: "1002345678"}
+      ]
     })
 	.then(response => {
 	  console.log(response); // card charged successfully, get reference here
@@ -252,6 +256,7 @@ chargeCard() {
 | transactionCharge (optional) | integer | the amount to be charged on a split-payment, use only when `subAccount` is set |
 | bearer (optional) | string | sets which party bears paystack fees on a split-payment e.g. 'subaccount', use only when `subAccount` is set |
 | reference (optional) | string | sets the transaction reference which must be unique per transaction |
+| customField (optional) | Array | sets the custom fields you want included in the transaction details while viewing on paystack dashboard e.g. `customField: [{display_name: "Your display name", value: "Your set value"}, ..., {display_name: "...", value: "..."}]` [Check the implementation here](#charging-a-card-ios--android) |
 
 #### Response Object
 
@@ -301,6 +306,7 @@ Perhaps needless to say, this module leverages the [Paystack Android SDK](https:
 * 3.1.4: Miscellaneous and dependencies update on Android.
 * 3.2.0: A Breaking Change - Initialize library in JS, rather than in native code.
 * 3.3.0: Move to a CocoaPods Flow for iOS.
+* 3.4.1: Minor update to include `customField` in request.
 
 ## 6. License
 
